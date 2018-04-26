@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:initialKeyguardLayout="@layout/watch_widget"
+    android:initialLayout="@layout/watch_widget"
+    android:minHeight="141dp"
+    android:minWidth="141dp"
+    android:previewImage="@drawable/preview"
+    android:resizeMode="horizontal|vertical"
+    android:updatePeriodMillis="86400000"
+    android:widgetCategory="home_screen"/>

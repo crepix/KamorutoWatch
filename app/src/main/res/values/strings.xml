@@ -1,0 +1,45 @@
+<resources>
+    <string name="app_name">かもる時計</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+
+    <string name="repeat">繰り返し</string>
+    <string name="rest">%d / 5</string>
+
+    <string name="notification">時間ると！時間になったると！</string>
+
+    <string name="sleepy_0">今日はもう\nおねむると…</string>
+    <string name="sleepy_1">また明日ると～</string>
+    <string name="sleepy_2">おやすみると～</string>
+    <string name="sleepy_3">夜更かしはダメると～</string>
+    <string name="sleepy_4">ふわぁ…</string>
+    <string name="sleepy_5">明日も遊ぶると～</string>
+    <string name="sleepy_6">お布団はあったかると</string>
+    <string name="sleepy_7">まだ寝ないると？</string>
+    <string name="sleepy_8">ちょっとだけ寝る前に\nスマホると～</string>
+    <string name="sleepy_9">羊を数えると～</string>
+
+    <string name="sleep_0">…zzz</string>
+    <string name="sleep_1">…むにゃ…むにゃ</string>
+    <string name="sleep_3">…ると～</string>
+    <string name="sleep_4">…すぅ…すぅ</string>
+    <string name="sleep_5">…クシュン！</string>
+    <string name="sleep_6">…うーん…うーん</string>
+    <string name="sleep_7">るとはおいしくない\nると！！</string>
+    <string name="sleep_8">…ずずず\nずずず</string>
+    <string name="sleep_9">…zzz…zzz</string>
+
+    <!-- 1行全角10文字3行まで -->
+    <string name="maxim_0">時は金なりると～</string>
+    <string name="maxim_1">"今日のご飯は\nハンバーグがいいると"</string>
+    <string name="maxim_2">"明日には明日の\n風が吹くると～"</string>
+    <string name="maxim_3">"知らぬが仏、ると～"</string>
+    <string name="maxim_4">"お菓子は食べると\n無くなるると"</string>
+    <string name="maxim_5">"るとの中身は\nお菓子ると～"</string>
+    <string name="maxim_6">"ナポリタンは\nナポリ発祥\nじゃないると"</string>
+    <string name="maxim_7">"もののあはれると～"</string>
+    <string name="maxim_8">"るとの名前は\nかもるとると"</string>
+    <string name="maxim_9">"壁に耳あり\n障子にメアリー\nると～"</string>
+    <string name="maxim_10">"東京特許\nきょきゃきょくると～"</string>
+
+</resources>

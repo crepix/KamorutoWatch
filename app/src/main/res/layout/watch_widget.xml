@@ -1,0 +1,170 @@
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="141dp"
+    android:layout_height="141dp"
+    android:layout_gravity="center">
+    <ImageView
+        android:layout_width="141dp"
+        android:layout_height="141dp"
+        android:contentDescription="@string/app_name"
+        android:layout_gravity="center|start"
+        android:src="@drawable/background"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/time_minute_one"
+            android:layout_width="30dp"
+            android:layout_height="60dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="5dp"
+            android:layout_marginRight="5dp"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/time_0" />
+
+        <ImageView
+            android:id="@+id/time_minute_ten"
+            android:layout_width="30dp"
+            android:layout_height="60dp"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/time_minute_one"
+            android:layout_toStartOf="@+id/time_minute_one"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/time_0" />
+
+        <ImageView
+            android:id="@+id/time_colon"
+            android:layout_width="10dp"
+            android:layout_height="60dp"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/time_minute_ten"
+            android:layout_toStartOf="@+id/time_minute_ten"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/time_colon" />
+
+        <ImageView
+            android:id="@+id/time_hour_one"
+            android:layout_width="30dp"
+            android:layout_height="60dp"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/time_colon"
+            android:layout_toStartOf="@+id/time_colon"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/time_0" />
+
+        <ImageView
+            android:id="@+id/time_hour_ten"
+            android:layout_width="30dp"
+            android:layout_height="60dp"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/time_hour_one"
+            android:layout_toStartOf="@+id/time_hour_one"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/time_1" />
+
+        <ImageView
+            android:id="@+id/kamoruto"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ruto_selector_0"
+            android:clickable="true"
+            android:contentDescription="@string/app_name"
+            android:focusable="true" />
+
+        <ImageView
+            android:id="@+id/week"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_below="@+id/month_slash"
+            android:layout_toLeftOf="@+id/kamoruto"
+            android:layout_toStartOf="@+id/kamoruto"
+            android:src="@drawable/week_monday" />
+
+        <ImageView
+            android:id="@+id/day_one"
+            android:layout_width="10dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/time_hour_ten"
+            android:layout_toEndOf="@+id/day_ten"
+            android:layout_toRightOf="@+id/day_ten"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/time_5" />
+
+        <ImageView
+            android:id="@+id/day_ten"
+            android:layout_width="10dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/time_hour_ten"
+            android:layout_toEndOf="@+id/month_slash"
+            android:layout_toRightOf="@+id/month_slash"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/time_2" />
+
+        <ImageView
+            android:id="@+id/month_slash"
+            android:layout_width="10dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/time_hour_ten"
+            android:layout_toEndOf="@+id/month_one"
+            android:layout_toRightOf="@+id/month_one"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/month_slash" />
+
+        <ImageView
+            android:id="@+id/month_one"
+            android:layout_width="10dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/time_hour_ten"
+            android:layout_toEndOf="@+id/month_ten"
+            android:layout_toRightOf="@+id/month_ten"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/time_1" />
+
+        <ImageView
+            android:id="@+id/month_ten"
+            android:layout_width="10dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/time_hour_ten"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/time_1" />
+
+        <ImageView
+            android:id="@+id/talk"
+            android:layout_width="141dp"
+            android:layout_height="80dp"
+            android:contentDescription="@string/app_name"
+            android:layout_gravity="center|top"
+            android:src="@drawable/talk"
+            android:visibility="invisible"/>
+        <TextView
+            android:id="@+id/talk_text"
+            android:layout_width="141dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center|top"
+            android:paddingTop="6dp"
+            android:paddingLeft="10dp"
+            android:paddingStart="10dp"
+            android:paddingRight="10dp"
+            android:paddingEnd="10dp"
+            android:singleLine="false"
+            android:textColor="@color/kamoruto_talk"
+            android:textSize="12sp" />
+    </RelativeLayout>
+
+</FrameLayout>
