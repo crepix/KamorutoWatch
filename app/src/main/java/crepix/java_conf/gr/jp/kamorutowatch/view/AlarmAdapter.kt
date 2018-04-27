@@ -20,7 +20,7 @@ class AlarmAdapter(list: List<AlarmItem>, private val listener: Listener) : Recy
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
         when(holder) {
             is AlarmViewHolder -> {
-                val binding = holder.binding
+                val binding = holder.binding ?: return
                 val item = alarms[position]
 
                 setTimeTwo(binding.timeMinuteTen, binding.timeMinuteOne, item.minute)
@@ -118,7 +118,7 @@ class AlarmAdapter(list: List<AlarmItem>, private val listener: Listener) : Recy
                 }
             }
             is CountViewHolder -> {
-                val binding = holder.binding
+                val binding = holder.binding ?: return
                 binding.rest.text = binding.root.context.getString(R.string.rest, alarms.size)
             }
         }
@@ -234,16 +234,16 @@ class AlarmAdapter(list: List<AlarmItem>, private val listener: Listener) : Recy
         Alarm(0), Empty(1), Count(2)
     }
 
-    class AlarmViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
-        val binding = DataBindingUtil.bind<AlarmItemBinding>(itemView)!!
+    class AlarmViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val binding = DataBindingUtil.bind<AlarmItemBinding>(itemView)
     }
 
-    class EmptyViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
-        val binding = DataBindingUtil.bind<EmptyItemBinding>(itemView)!!
+    class EmptyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val binding = DataBindingUtil.bind<EmptyItemBinding>(itemView)
     }
 
-    class CountViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
-        val binding = DataBindingUtil.bind<CountItemBinding>(itemView)!!
+    class CountViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val binding = DataBindingUtil.bind<CountItemBinding>(itemView)
     }
 
     interface Listener {

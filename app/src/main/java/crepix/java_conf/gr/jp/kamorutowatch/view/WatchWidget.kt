@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.*
 import android.os.SystemClock
+import android.util.Log
 import android.view.View
 import android.widget.RemoteViews
 
@@ -23,8 +24,7 @@ class WatchWidget : AppWidgetProvider() {
         // There may be multiple widgets active, so update all of them
         for (appWidgetId in appWidgetIds) {
             val pref = context.getSharedPreferences(DailyMaximPreference.name, Context.MODE_PRIVATE)
-            val isShowing = pref.getBoolean(DailyMaximPreference.isShowing, DailyMaximPreference.isShowingDefault)
-            updateAppWidget(context, appWidgetManager, appWidgetId, isShowing)
+            updateAppWidget(context, appWidgetManager, appWidgetId, pref)
         }
     }
 
@@ -36,18 +36,18 @@ class WatchWidget : AppWidgetProvider() {
         if (action == buttonFilter) {
             context?.let {
                 val pref = context.getSharedPreferences(DailyMaximPreference.name, Context.MODE_PRIVATE)
-                val isShowing = pref.getBoolean(DailyMaximPreference.isShowing, DailyMaximPreference.isShowingDefault)
-                updateAll(it, AppWidgetManager.getInstance(context), !isShowing)
                 val editor = pref.edit()
-                editor.putBoolean(DailyMaximPreference.isShowing, !isShowing)
+                editor.putBoolean(
+                        DailyMaximPreference.isShowing,
+                        !pref.getBoolean(DailyMaximPreference.isShowing, DailyMaximPreference.isShowingDefault))
                 editor.apply()
+                updateAll(it, AppWidgetManager.getInstance(context), pref)
             }
         }
         if (action == clockFilter) {
             context?.let {
                 val pref = context.getSharedPreferences(DailyMaximPreference.name, Context.MODE_PRIVATE)
-                val isShowing = pref.getBoolean(DailyMaximPreference.isShowing, DailyMaximPreference.isShowingDefault)
-                updateAll(it, AppWidgetManager.getInstance(context), isShowing)
+                updateAll(it, AppWidgetManager.getInstance(context), pref)
             }
         }
     }
@@ -82,7 +82,11 @@ class WatchWidget : AppWidgetProvider() {
         private const val buttonFilter = "crepix.java_conf.gr.jp.kamorutowatch.button"
         private const val clockFilter = "crepix.java_conf.gr.jp.kamorutowatch.clock"
 
-        internal fun updateAll(context: Context, appWidgetManager: AppWidgetManager, isTalkShowing: Boolean) {
+        internal fun updateAll(
+                context: Context,
+                appWidgetManager: AppWidgetManager,
+                preferences: SharedPreferences) {
+            val isShowing = preferences.getBoolean(DailyMaximPreference.isShowing, DailyMaximPreference.isShowingDefault)
             val views = RemoteViews(context.packageName, R.layout.watch_widget)
             views.setOnClickPendingIntent(R.id.kamoruto, PendingIntent.getBroadcast(
                     context,
@@ -91,21 +95,24 @@ class WatchWidget : AppWidgetProvider() {
                     PendingIntent.FLAG_UPDATE_CURRENT))
 
             val calendar = Calendar.getInstance(TimeZone.getDefault())
-            if (isTalkShowing) {
-                showTalk(views, context)
+            val currentRuto = changeRutoIfRightTiming(views, calendar, preferences)
+            if (isShowing) {
+                showTalk(views, context, currentRuto)
             } else {
                 resetDate(views, calendar)
             }
-            changeRuto(views, calendar)
             appWidgetManager.updateAppWidget(ComponentName(context, WatchWidget::class.java), views)
         }
 
-        internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager,
-                                     appWidgetId: Int, isTalkShowing: Boolean) {
+        internal fun updateAppWidget(
+                context: Context,
+                appWidgetManager: AppWidgetManager,
+                appWidgetId: Int,
+                preferences: SharedPreferences) {
 
             // Construct the RemoteViews object
+            val isShowing = preferences.getBoolean(DailyMaximPreference.isShowing, DailyMaximPreference.isShowingDefault)
             val views = RemoteViews(context.packageName, R.layout.watch_widget)
-
             views.setOnClickPendingIntent(R.id.kamoruto, PendingIntent.getBroadcast(
                     context,
                     1,
@@ -113,28 +120,64 @@ class WatchWidget : AppWidgetProvider() {
                     PendingIntent.FLAG_UPDATE_CURRENT))
 
             val calendar = Calendar.getInstance(TimeZone.getDefault())
-            if (isTalkShowing) {
-                showTalk(views, context)
+            val currentRuto = changeRuto(views, calendar, preferences)
+            if (isShowing) {
+                showTalk(views, context, currentRuto)
             } else {
                 resetDate(views, calendar)
             }
-            changeRuto(views, calendar)
             // Instruct the widget manager to update the widget
             appWidgetManager.updateAppWidget(appWidgetId, views)
         }
 
-        private fun changeRuto(views: RemoteViews, calendar: Calendar) {
-            when (calendar.get(Calendar.HOUR_OF_DAY)) {
-                15 -> views.setImageViewResource(R.id.kamoruto, R.drawable.ruto_selector_1)
-                else -> views.setImageViewResource(R.id.kamoruto, R.drawable.ruto_selector_0)
+        private fun changeRutoIfRightTiming(views: RemoteViews, calendar: Calendar, preferences: SharedPreferences): Int =
+                if (
+                        (calendar.get(Calendar.HOUR_OF_DAY) == 23 ||
+                                calendar.get(Calendar.HOUR_OF_DAY) == 15 ||
+                                calendar.get(Calendar.HOUR_OF_DAY) == 0 ||
+                                calendar.get(Calendar.HOUR_OF_DAY) == 7) &&
+                        calendar.get(Calendar.MINUTE) == 0 || // マージンを取って0分、1分で変える
+                        calendar.get(Calendar.MINUTE) == 1) {
+                    changeRuto(views, calendar, preferences)
+                } else {
+                    preferences.getInt(DailyMaximPreference.currentRuto, DailyMaximPreference.currentRutoDefault)
+                }
+
+        private fun changeRuto(views: RemoteViews, calendar: Calendar, preferences: SharedPreferences): Int {
+            val editor = preferences.edit()
+            return when (calendar.get(Calendar.HOUR_OF_DAY)) {
+                23 -> {
+                    editor.putInt(DailyMaximPreference.currentRuto, 3)
+                    editor.apply()
+                    views.setImageViewResource(R.id.kamoruto, R.drawable.ruto_selector_3)
+                    3
+                }
+                in 0..6 -> {
+                    editor.putInt(DailyMaximPreference.currentRuto, 2)
+                    editor.apply()
+                    views.setImageViewResource(R.id.kamoruto, R.drawable.ruto_selector_2)
+                    2
+                }
+                15 -> {
+                    editor.putInt(DailyMaximPreference.currentRuto, 1)
+                    editor.apply()
+                    views.setImageViewResource(R.id.kamoruto, R.drawable.ruto_selector_1)
+                    1
+                }
+                else -> {
+                    editor.putInt(DailyMaximPreference.currentRuto, 0)
+                    editor.apply()
+                    views.setImageViewResource(R.id.kamoruto, R.drawable.ruto_selector_0)
+                    0
+                }
             }
         }
 
-        private fun showTalk(views: RemoteViews, context: Context) {
+        private fun showTalk(views: RemoteViews, context: Context, currentRuto: Int) {
             views.setViewVisibility(R.id.talk, View.VISIBLE)
             views.setViewVisibility(R.id.talk_text, View.VISIBLE)
             val service = DailyMaximService(context)
-            views.setTextViewText(R.id.talk_text, service.getDailyMaxim())
+            views.setTextViewText(R.id.talk_text, service.getDailyMaxim(currentRuto))
         }
 
         private fun resetDate(views: RemoteViews, calendar: Calendar) {

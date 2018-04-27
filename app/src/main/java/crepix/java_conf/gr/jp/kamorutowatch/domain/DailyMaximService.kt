@@ -6,7 +6,7 @@ import java.util.*
 
 class DailyMaximService(private val context: Context) {
 
-    fun getDailyMaxim(): String {
+    fun getDailyMaxim(currentRuto: Int): String {
         val pref = context.getSharedPreferences(DailyMaximPreference.name, Context.MODE_PRIVATE)
         val lastTime = pref.getInt(DailyMaximPreference.lastTime, DailyMaximPreference.lastTimeDefault)
         val calendar = Calendar.getInstance(TimeZone.getDefault())
@@ -18,7 +18,11 @@ class DailyMaximService(private val context: Context) {
             editor.putInt(DailyMaximPreference.current, num)
             editor.apply()
         }
-        return context.getString(items[pref.getInt(DailyMaximPreference.current, DailyMaximPreference.currentDefault)])
+        return when(currentRuto) {
+            2 -> context.getString(sleepyItems[pref.getInt(DailyMaximPreference.current, DailyMaximPreference.currentDefault) % 10])
+            3 -> context.getString(sleepItems[pref.getInt(DailyMaximPreference.current, DailyMaximPreference.currentDefault) % 10])
+            else -> context.getString(items[pref.getInt(DailyMaximPreference.current, DailyMaximPreference.currentDefault)])
+        }
     }
 
     private val items = arrayListOf(
@@ -33,4 +37,28 @@ class DailyMaximService(private val context: Context) {
             R.string.maxim_8,
             R.string.maxim_9,
             R.string.maxim_10)
+
+    private val sleepyItems = arrayListOf(
+            R.string.sleepy_0,
+            R.string.sleepy_1,
+            R.string.sleepy_2,
+            R.string.sleepy_3,
+            R.string.sleepy_4,
+            R.string.sleepy_5,
+            R.string.sleepy_6,
+            R.string.sleepy_7,
+            R.string.sleepy_8,
+            R.string.sleepy_9)
+
+    private val sleepItems = arrayListOf(
+            R.string.sleep_0,
+            R.string.sleep_1,
+            R.string.sleep_2,
+            R.string.sleep_3,
+            R.string.sleep_4,
+            R.string.sleep_5,
+            R.string.sleep_6,
+            R.string.sleep_7,
+            R.string.sleep_8,
+            R.string.sleep_9)
 }
