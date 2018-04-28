@@ -3,6 +3,7 @@
 local.properties
 .idea/workspace.xml
 .idea/libraries
+.idea/*.xml
 *.iml
 .idea/workspace.xml
 .idea/tasks.xml
