@@ -89,10 +89,10 @@ class MainActivity : AppCompatActivity() {
         val millis = System.currentTimeMillis() + (minute * 60 * 1000 + hour * 60 * 60 * 1000).toLong()
 
         val manager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val i =  Intent(this, AlarmService::class.java)
+        val i = Intent(this, AlarmService::class.java)
         val gson = Gson()
         i.putExtra("alarmItem", gson.toJson(item))
-        val intent = PendingIntent.getService(this, item.id + 1000, i, 0)
+        val intent = PendingIntent.getService(this, item.id + 1000, i, PendingIntent.FLAG_CANCEL_CURRENT)
         when {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
                 setClockL(millis, manager, intent)

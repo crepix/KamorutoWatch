@@ -235,15 +235,15 @@ class AlarmAdapter(list: List<AlarmItem>, private val listener: Listener) : Recy
     }
 
     class AlarmViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val binding = DataBindingUtil.bind<AlarmItemBinding>(itemView)
+        var binding = DataBindingUtil.bind<AlarmItemBinding>(itemView)
     }
 
     class EmptyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val binding = DataBindingUtil.bind<EmptyItemBinding>(itemView)
+        var binding = DataBindingUtil.bind<EmptyItemBinding>(itemView)
     }
 
     class CountViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val binding = DataBindingUtil.bind<CountItemBinding>(itemView)
+        var binding = DataBindingUtil.bind<CountItemBinding>(itemView)
     }
 
     interface Listener {
