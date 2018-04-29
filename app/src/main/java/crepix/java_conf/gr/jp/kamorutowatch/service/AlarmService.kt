@@ -36,7 +36,7 @@ class AlarmService : IntentService("AlarmService") {
         val service = NotificationService(this)
         val notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
         val r = RingtoneManager.getRingtone(applicationContext, notification)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && service.getIsAlarmAllTime()) {
             val attr = AudioAttributes.Builder()
                     .setUsage(AudioAttributes.USAGE_ALARM)
                     .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)

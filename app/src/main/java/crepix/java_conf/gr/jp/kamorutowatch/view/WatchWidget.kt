@@ -136,8 +136,7 @@ class WatchWidget : AppWidgetProvider() {
                                 calendar.get(Calendar.HOUR_OF_DAY) == 15 ||
                                 calendar.get(Calendar.HOUR_OF_DAY) == 0 ||
                                 calendar.get(Calendar.HOUR_OF_DAY) == 7) &&
-                        calendar.get(Calendar.MINUTE) == 0 || // マージンを取って0分、1分で変える
-                        calendar.get(Calendar.MINUTE) == 1) {
+                        (calendar.get(Calendar.MINUTE) == 0 || calendar.get(Calendar.MINUTE) == 1)) {
                     changeRuto(views, calendar, preferences)
                 } else {
                     preferences.getInt(DailyMaximPreference.currentRuto, DailyMaximPreference.currentRutoDefault)

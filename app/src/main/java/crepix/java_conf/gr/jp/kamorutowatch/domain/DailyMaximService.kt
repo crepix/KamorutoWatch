@@ -19,8 +19,8 @@ class DailyMaximService(private val context: Context) {
             editor.apply()
         }
         return when(currentRuto) {
-            2 -> context.getString(sleepyItems[pref.getInt(DailyMaximPreference.current, DailyMaximPreference.currentDefault) % 10])
-            3 -> context.getString(sleepItems[pref.getInt(DailyMaximPreference.current, DailyMaximPreference.currentDefault) % 10])
+            3 -> context.getString(sleepyItems[pref.getInt(DailyMaximPreference.current, DailyMaximPreference.currentDefault) % 10])
+            2 -> context.getString(sleepItems[pref.getInt(DailyMaximPreference.current, DailyMaximPreference.currentDefault) % 10])
             else -> context.getString(items[pref.getInt(DailyMaximPreference.current, DailyMaximPreference.currentDefault)])
         }
     }

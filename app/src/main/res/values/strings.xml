@@ -8,8 +8,7 @@
 
     <string name="notification">時間ると！時間になったると！</string>
 
-    <string name="setting_alarm">通常マナーモードでもアラームを鳴らす</string>
-    <string name="setting_schedule">widgetタップで最も近い締め切りを表示</string>
+    <string name="setting_alarm">通常マナーモードでのアラームON</string>
 
     <string name="sleepy_0">今日はもう\nおねむると…</string>
     <string name="sleepy_1">また明日ると～</string>

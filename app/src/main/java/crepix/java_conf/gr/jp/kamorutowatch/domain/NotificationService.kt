@@ -6,9 +6,9 @@ import com.google.gson.Gson
 
 class NotificationService(private val context: Context) {
     val max = 5
+    val pref = context.getSharedPreferences(NotificationPreference.name, Context.MODE_PRIVATE)
 
     fun getList(): List<AlarmItem> {
-        val pref = context.getSharedPreferences(NotificationPreference.name, Context.MODE_PRIVATE)
         val source = pref.getString(NotificationPreference.list, "")
         if (source.isEmpty()) {
             return listOf()
@@ -27,7 +27,6 @@ class NotificationService(private val context: Context) {
         notification.hour = hour
         notification.minute = minute
         val gson = Gson()
-        val pref = context.getSharedPreferences(NotificationPreference.name, Context.MODE_PRIVATE)
         val editor = pref.edit()
         editor.putString(NotificationPreference.list, gson.toJson(list + notification))
         editor.apply()
@@ -37,7 +36,6 @@ class NotificationService(private val context: Context) {
     fun update(notification: AlarmItem) {
         val list = getList()
         list.find { it.id == notification.id }?.paste(notification)
-        val pref = context.getSharedPreferences(NotificationPreference.name, Context.MODE_PRIVATE)
         val editor = pref.edit()
         val gson = Gson()
         editor.putString(NotificationPreference.list, gson.toJson(list))
@@ -46,10 +44,29 @@ class NotificationService(private val context: Context) {
 
     fun remove(id: Int) {
         val list = getList().filter { it.id != id }
-        val pref = context.getSharedPreferences(NotificationPreference.name, Context.MODE_PRIVATE)
         val editor = pref.edit()
         val gson = Gson()
         editor.putString(NotificationPreference.list, gson.toJson(list))
+        editor.apply()
+    }
+
+    fun getIsAlarmAllTime(): Boolean {
+        return pref.getBoolean(NotificationPreference.isAlarmAllTime, NotificationPreference.isAlarmAllTimeDefault)
+    }
+
+    fun setIsAlarmAllTime(isAllTime: Boolean) {
+        val editor = pref.edit()
+        editor.putBoolean(NotificationPreference.isAlarmAllTime, isAllTime)
+        editor.apply()
+    }
+
+    fun getShouldRefresh(): Boolean {
+        return pref.getBoolean(NotificationPreference.shouldRefresh, NotificationPreference.shouldRefreshDefault)
+    }
+
+    fun setShouldRefresh(should: Boolean) {
+        val editor = pref.edit()
+        editor.putBoolean(NotificationPreference.shouldRefresh, should)
         editor.apply()
     }
 }

@@ -11,7 +11,6 @@ import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.View
 import com.google.gson.Gson
 import crepix.java_conf.gr.jp.kamorutowatch.R
@@ -29,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         val service = NotificationService(this)
         val list = service.getList()
-        val adapter = AlarmAdapter(list, object: AlarmAdapter.Listener {
+        val adapter = AlarmAdapter(list, service.getIsAlarmAllTime(), object: AlarmAdapter.Listener {
             override fun onStatusChanged(item: AlarmItem) {
                 service.update(item)
                 if (item.isEnabled) {
@@ -50,6 +49,10 @@ class MainActivity : AppCompatActivity() {
                 service.remove(id)
                 removeTimer(id)
                 binding.add.visibility = View.VISIBLE
+            }
+
+            override fun onAlarmChanged(isAllTime: Boolean) {
+                service.setIsAlarmAllTime(isAllTime)
             }
         })
         binding.recyclerView.adapter = adapter

@@ -14,8 +14,9 @@ import crepix.java_conf.gr.jp.kamorutowatch.databinding.EmptyItemBinding
 import crepix.java_conf.gr.jp.kamorutowatch.domain.AlarmItem
 
 
-class AlarmAdapter(list: List<AlarmItem>, private val listener: Listener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class AlarmAdapter(list: List<AlarmItem>, isAlarmAllTime: Boolean, private val listener: Listener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var alarms = list
+    private var alarmAllTime = isAlarmAllTime
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
         when(holder) {
@@ -120,6 +121,11 @@ class AlarmAdapter(list: List<AlarmItem>, private val listener: Listener) : Recy
             is CountViewHolder -> {
                 val binding = holder.binding ?: return
                 binding.rest.text = binding.root.context.getString(R.string.rest, alarms.size)
+                binding.alarmAllTime.isChecked = alarmAllTime
+                binding.alarmAllTime.setOnCheckedChangeListener({ _, isChecked ->
+                    alarmAllTime = isChecked
+                    listener.onAlarmChanged(isChecked)
+                })
             }
         }
     }
@@ -250,5 +256,6 @@ class AlarmAdapter(list: List<AlarmItem>, private val listener: Listener) : Recy
         fun onStatusChanged(item: AlarmItem)
         fun onSwitchChanged(item: AlarmItem)
         fun onItemDeleted(id: Int)
+        fun onAlarmChanged(isAllTime: Boolean)
     }
 }
