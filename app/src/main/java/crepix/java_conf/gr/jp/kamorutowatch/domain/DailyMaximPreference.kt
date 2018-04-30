@@ -11,7 +11,4 @@ object DailyMaximPreference {
 
     const val isShowing = "showing"
     const val isShowingDefault = false
-
-    const val currentRuto = "current_ruto"
-    const val currentRutoDefault = 0
 }

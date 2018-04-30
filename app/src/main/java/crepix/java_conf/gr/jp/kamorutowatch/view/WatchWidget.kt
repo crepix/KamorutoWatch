@@ -88,14 +88,18 @@ class WatchWidget : AppWidgetProvider() {
                 preferences: SharedPreferences) {
             val isShowing = preferences.getBoolean(DailyMaximPreference.isShowing, DailyMaximPreference.isShowingDefault)
             val views = RemoteViews(context.packageName, R.layout.watch_widget)
-            views.setOnClickPendingIntent(R.id.kamoruto, PendingIntent.getBroadcast(
+            val pendingIntent = PendingIntent.getBroadcast(
                     context,
                     1,
                     Intent(buttonFilter),
-                    PendingIntent.FLAG_UPDATE_CURRENT))
+                    PendingIntent.FLAG_UPDATE_CURRENT)
+            views.setOnClickPendingIntent(R.id.kamoruto, pendingIntent)
+            views.setOnClickPendingIntent(R.id.kamoruto_eat, pendingIntent)
+            views.setOnClickPendingIntent(R.id.kamoruto_sleep, pendingIntent)
+            views.setOnClickPendingIntent(R.id.kamoruto_sleepy, pendingIntent)
 
             val calendar = Calendar.getInstance(TimeZone.getDefault())
-            val currentRuto = changeRutoIfRightTiming(views, calendar, preferences)
+            val currentRuto = changeRuto(views, calendar)
             if (isShowing) {
                 showTalk(views, context, currentRuto)
             } else {
@@ -113,14 +117,17 @@ class WatchWidget : AppWidgetProvider() {
             // Construct the RemoteViews object
             val isShowing = preferences.getBoolean(DailyMaximPreference.isShowing, DailyMaximPreference.isShowingDefault)
             val views = RemoteViews(context.packageName, R.layout.watch_widget)
-            views.setOnClickPendingIntent(R.id.kamoruto, PendingIntent.getBroadcast(
+            val pendingIntent = PendingIntent.getBroadcast(
                     context,
                     1,
                     Intent(buttonFilter),
-                    PendingIntent.FLAG_UPDATE_CURRENT))
-
+                    PendingIntent.FLAG_UPDATE_CURRENT)
+            views.setOnClickPendingIntent(R.id.kamoruto, pendingIntent)
+            views.setOnClickPendingIntent(R.id.kamoruto_eat, pendingIntent)
+            views.setOnClickPendingIntent(R.id.kamoruto_sleep, pendingIntent)
+            views.setOnClickPendingIntent(R.id.kamoruto_sleepy, pendingIntent)
             val calendar = Calendar.getInstance(TimeZone.getDefault())
-            val currentRuto = changeRuto(views, calendar, preferences)
+            val currentRuto = changeRuto(views, calendar)
             if (isShowing) {
                 showTalk(views, context, currentRuto)
             } else {
@@ -130,43 +137,34 @@ class WatchWidget : AppWidgetProvider() {
             appWidgetManager.updateAppWidget(appWidgetId, views)
         }
 
-        private fun changeRutoIfRightTiming(views: RemoteViews, calendar: Calendar, preferences: SharedPreferences): Int =
-                if (
-                        (calendar.get(Calendar.HOUR_OF_DAY) == 23 ||
-                                calendar.get(Calendar.HOUR_OF_DAY) == 15 ||
-                                calendar.get(Calendar.HOUR_OF_DAY) == 0 ||
-                                calendar.get(Calendar.HOUR_OF_DAY) == 7) &&
-                        (calendar.get(Calendar.MINUTE) == 0 || calendar.get(Calendar.MINUTE) == 1)) {
-                    changeRuto(views, calendar, preferences)
-                } else {
-                    preferences.getInt(DailyMaximPreference.currentRuto, DailyMaximPreference.currentRutoDefault)
-                }
-
-        private fun changeRuto(views: RemoteViews, calendar: Calendar, preferences: SharedPreferences): Int {
-            val editor = preferences.edit()
+        private fun changeRuto(views: RemoteViews, calendar: Calendar): Int {
             return when (calendar.get(Calendar.HOUR_OF_DAY)) {
                 23 -> {
-                    editor.putInt(DailyMaximPreference.currentRuto, 3)
-                    editor.apply()
-                    views.setImageViewResource(R.id.kamoruto, R.drawable.ruto_selector_3)
+                    views.setViewVisibility(R.id.kamoruto, View.INVISIBLE)
+                    views.setViewVisibility(R.id.kamoruto_eat, View.INVISIBLE)
+                    views.setViewVisibility(R.id.kamoruto_sleep, View.INVISIBLE)
+                    views.setViewVisibility(R.id.kamoruto_sleepy, View.VISIBLE)
                     3
                 }
                 in 0..6 -> {
-                    editor.putInt(DailyMaximPreference.currentRuto, 2)
-                    editor.apply()
-                    views.setImageViewResource(R.id.kamoruto, R.drawable.ruto_selector_2)
+                    views.setViewVisibility(R.id.kamoruto, View.INVISIBLE)
+                    views.setViewVisibility(R.id.kamoruto_eat, View.INVISIBLE)
+                    views.setViewVisibility(R.id.kamoruto_sleep, View.VISIBLE)
+                    views.setViewVisibility(R.id.kamoruto_sleepy, View.INVISIBLE)
                     2
                 }
                 15 -> {
-                    editor.putInt(DailyMaximPreference.currentRuto, 1)
-                    editor.apply()
-                    views.setImageViewResource(R.id.kamoruto, R.drawable.ruto_selector_1)
+                    views.setViewVisibility(R.id.kamoruto, View.INVISIBLE)
+                    views.setViewVisibility(R.id.kamoruto_eat, View.VISIBLE)
+                    views.setViewVisibility(R.id.kamoruto_sleep, View.INVISIBLE)
+                    views.setViewVisibility(R.id.kamoruto_sleepy, View.INVISIBLE)
                     1
                 }
                 else -> {
-                    editor.putInt(DailyMaximPreference.currentRuto, 0)
-                    editor.apply()
-                    views.setImageViewResource(R.id.kamoruto, R.drawable.ruto_selector_0)
+                    views.setViewVisibility(R.id.kamoruto, View.VISIBLE)
+                    views.setViewVisibility(R.id.kamoruto_eat, View.INVISIBLE)
+                    views.setViewVisibility(R.id.kamoruto_sleep, View.INVISIBLE)
+                    views.setViewVisibility(R.id.kamoruto_sleepy, View.INVISIBLE)
                     0
                 }
             }

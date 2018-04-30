@@ -29,7 +29,7 @@
     <string name="sleep_5">…クシュン！</string>
     <string name="sleep_6">…うーん…うーん</string>
     <string name="sleep_7">るとはおいしくない\nると！！</string>
-    <string name="sleep_8">…ずずず\nずずず</string>
+    <string name="sleep_8">…ずずず…ずずず</string>
     <string name="sleep_9">…zzz…zzz</string>
 
     <!-- 1行全角10文字3行まで -->
@@ -44,5 +44,15 @@
     <string name="maxim_8">"るとの名前は\nかもるとると"</string>
     <string name="maxim_9">"壁に耳あり\n障子にメアリー\nると～"</string>
     <string name="maxim_10">"東京特許\nきょきゃきょくると～"</string>
+    <string name="maxim_11">"おみくじると～\n運勢は「大吉」ると！\nいいことあるると～"</string>
+    <string name="maxim_12">"おみくじると～\n運勢は「吉」ると！\nのんびり過ごすると～"</string>
+    <string name="maxim_13">"おみくじると～\n運勢は「凶」ると！\n夜道に気を付けるると"</string>
+    <string name="maxim_14">"おみくじると～\n運勢は「大凶」ると！\n運はここがどん底ると"</string>
+    <string name="maxim_15">"るとの中身は\nお菓子ると～"</string>
+    <string name="maxim_16">"ナポリタンは\nナポリ発祥\nじゃないると"</string>
+    <string name="maxim_17">"もののあはれると～"</string>
+    <string name="maxim_18">"るとの名前は\nかもるとると"</string>
+    <string name="maxim_19">"壁に耳あり\n障子にメアリー\nると～"</string>
+    <string name="maxim_20">"東京特許\nきょきゃきょくると～"</string>
 
 </resources>

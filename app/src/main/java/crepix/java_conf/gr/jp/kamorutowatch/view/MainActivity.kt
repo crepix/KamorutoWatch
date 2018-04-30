@@ -1,45 +1,54 @@
 package crepix.java_conf.gr.jp.kamorutowatch.view
 
-import android.annotation.TargetApi
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.databinding.DataBindingUtil
-import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import com.google.gson.Gson
 import crepix.java_conf.gr.jp.kamorutowatch.R
 import crepix.java_conf.gr.jp.kamorutowatch.databinding.ActivityMainBinding
 import crepix.java_conf.gr.jp.kamorutowatch.domain.AlarmItem
 import crepix.java_conf.gr.jp.kamorutowatch.domain.NotificationService
 import crepix.java_conf.gr.jp.kamorutowatch.service.AlarmService
+import crepix.java_conf.gr.jp.kamorutowatch.utility.AlarmNotificationUtility
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
+    lateinit var adapter: AlarmAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         val service = NotificationService(this)
         val list = service.getList()
-        val adapter = AlarmAdapter(list, service.getIsAlarmAllTime(), object: AlarmAdapter.Listener {
+        val manager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        adapter = AlarmAdapter(list, service.getIsAlarmAllTime(), object: AlarmAdapter.Listener {
             override fun onStatusChanged(item: AlarmItem) {
                 service.update(item)
                 if (item.isEnabled) {
-                    setTimer(item)
+                    removeTimer(item.id)
+                    if (item.isRepeated) {
+                        setTimerForWeek(item, manager)
+                    } else {
+                        AlarmNotificationUtility.setTimer(item, manager, this@MainActivity)
+                    }
                 }
             }
 
             override fun onSwitchChanged(item: AlarmItem) {
                 service.update(item)
                 if (item.isEnabled) {
-                    setTimer(item)
+                    if (item.isRepeated) {
+                        setTimerForWeek(item, manager)
+                    } else {
+                        AlarmNotificationUtility.setTimer(item, manager, this@MainActivity)
+                    }
                 } else {
                     removeTimer(item.id)
                 }
@@ -66,7 +75,7 @@ class MainActivity : AppCompatActivity() {
                 val item = service.create(hour, minute)
                 item?.let {
                     adapter.add(it)
-                    setTimer(it)
+                    AlarmNotificationUtility.setTimer(item, manager, this@MainActivity)
                     if (service.getList().size >= service.max) {
                         binding.add.visibility = View.GONE
                     }
@@ -77,50 +86,34 @@ class MainActivity : AppCompatActivity() {
         this.supportActionBar?.hide()
     }
 
-    private fun setTimer(item: AlarmItem) {
+    override fun onResume() {
+        super.onResume()
+        val service = NotificationService(this)
+        if (service.getShouldRefresh()) {
+            adapter.refresh(service.getList())
+            service.setShouldRefresh(false)
+        }
+    }
+
+    private fun setTimerForWeek(item: AlarmItem, manager: AlarmManager) {
         val calendar = Calendar.getInstance(TimeZone.getDefault())
-        val hour = if (item.hour >= calendar.get(Calendar.HOUR_OF_DAY)) {
-            item.hour - calendar.get(Calendar.HOUR_OF_DAY)
-        } else {
-            24 + item.hour - calendar.get(Calendar.HOUR_OF_DAY)
-        }
-        val minute = if (item.minute >= calendar.get(Calendar.MINUTE)) {
-            item.minute - calendar.get(Calendar.MINUTE)
-        } else {
-            60 + item.minute - calendar.get(Calendar.MINUTE)
-        }
-        val millis = System.currentTimeMillis() + (minute * 60 * 1000 + hour * 60 * 60 * 1000).toLong()
-
-        val manager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val i = Intent(this, AlarmService::class.java)
-        val gson = Gson()
-        i.putExtra("alarmItem", gson.toJson(item))
-        val intent = PendingIntent.getService(this, item.id + 1000, i, PendingIntent.FLAG_CANCEL_CURRENT)
-        when {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
-                setClockL(millis, manager, intent)
+        val week = calendar.get(Calendar.DAY_OF_WEEK)
+        var counter = 0
+        loop@ while (counter != 7) {
+            val w = (week - 1 + counter) % 7 + 1
+            if (
+                    (w == Calendar.SUNDAY && item.notifySunday) ||
+                    (w == Calendar.MONDAY && item.notifyMonday) ||
+                    (w == Calendar.TUESDAY && item.notifyTuesday) ||
+                    (w == Calendar.WEDNESDAY && item.notifyWednesday) ||
+                    (w == Calendar.THURSDAY && item.notifyThursday) ||
+                    (w == Calendar.FRIDAY && item.notifyFriday) ||
+                    (w == Calendar.SATURDAY && item.notifySaturday)) {
+                AlarmNotificationUtility.setTimer(item, manager, this, counter)
+                break@loop
             }
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT -> {
-                setClockM(millis, manager, intent)
-            }
-            else -> {
-                setClock(millis, manager, intent)
-            }
+            counter++
         }
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private fun setClockL(millis: Long, manager: AlarmManager, intent: PendingIntent) {
-        manager.setAlarmClock(AlarmManager.AlarmClockInfo(millis, null), intent)
-    }
-
-    @TargetApi(Build.VERSION_CODES.M)
-    private fun setClockM(millis: Long, manager: AlarmManager, intent: PendingIntent) {
-        manager.setExact(AlarmManager.RTC_WAKEUP, millis, intent)
-    }
-
-    private fun setClock(millis: Long, manager: AlarmManager, intent: PendingIntent) {
-        manager.set(AlarmManager.RTC_WAKEUP, millis, intent)
     }
 
     private fun removeTimer(id: Int) {

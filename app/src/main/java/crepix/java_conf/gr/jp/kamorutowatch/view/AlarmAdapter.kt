@@ -2,6 +2,7 @@ package crepix.java_conf.gr.jp.kamorutowatch.view
 
 import android.app.TimePickerDialog
 import android.databinding.DataBindingUtil
+import android.os.Build
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -77,6 +78,7 @@ class AlarmAdapter(list: List<AlarmItem>, isAlarmAllTime: Boolean, private val l
                         binding.weekFriday.visibility = View.GONE
                         binding.weekSaturday.visibility = View.GONE
                     }
+                    listener.onStatusChanged(item)
                 }
                 binding.delete.setOnClickListener {
                     remove(item.id)
@@ -121,6 +123,9 @@ class AlarmAdapter(list: List<AlarmItem>, isAlarmAllTime: Boolean, private val l
             is CountViewHolder -> {
                 val binding = holder.binding ?: return
                 binding.rest.text = binding.root.context.getString(R.string.rest, alarms.size)
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                    binding.alarmAllTime.visibility = View.GONE
+                }
                 binding.alarmAllTime.isChecked = alarmAllTime
                 binding.alarmAllTime.setOnCheckedChangeListener({ _, isChecked ->
                     alarmAllTime = isChecked
@@ -171,6 +176,11 @@ class AlarmAdapter(list: List<AlarmItem>, isAlarmAllTime: Boolean, private val l
             notifyItemInserted(alarms.size - 1)
             notifyItemChanged(alarms.size)
         }
+    }
+
+    fun refresh(list: List<AlarmItem>) {
+        alarms = list
+        notifyDataSetChanged()
     }
 
     private fun remove(id: Int) {

@@ -1,21 +1,22 @@
 package crepix.java_conf.gr.jp.kamorutowatch.service
 
 import android.app.*
+import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.media.AudioAttributes
 import android.support.v4.app.NotificationCompat
-import android.util.Log
 import com.google.gson.Gson
 import crepix.java_conf.gr.jp.kamorutowatch.R
 import crepix.java_conf.gr.jp.kamorutowatch.domain.AlarmItem
 import crepix.java_conf.gr.jp.kamorutowatch.domain.NotificationService
 import crepix.java_conf.gr.jp.kamorutowatch.view.MainActivity
 import android.media.RingtoneManager
-import android.media.Ringtone
-import android.net.Uri
 import android.os.Build
+import android.util.Log
+import crepix.java_conf.gr.jp.kamorutowatch.utility.AlarmNotificationUtility
+import java.util.*
 
 
 class AlarmService : IntentService("AlarmService") {
@@ -47,10 +48,29 @@ class AlarmService : IntentService("AlarmService") {
 
         // TODO リピートがオンの場合は通知を再セットする
         if (item.isRepeated) {
-
+            val calendar = Calendar.getInstance(TimeZone.getDefault())
+            val week = calendar.get(Calendar.DAY_OF_WEEK)
+            val manager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            var counter = 1
+            loop@ while (counter != 8) {
+                val w = (week - 1 + counter) % 7 + 1
+                if (
+                        (w == Calendar.SUNDAY && item.notifySunday) ||
+                        (w == Calendar.MONDAY && item.notifyMonday) ||
+                        (w == Calendar.TUESDAY && item.notifyTuesday) ||
+                        (w == Calendar.WEDNESDAY && item.notifyWednesday) ||
+                        (w == Calendar.THURSDAY && item.notifyThursday) ||
+                        (w == Calendar.FRIDAY && item.notifyFriday) ||
+                        (w == Calendar.SATURDAY && item.notifySaturday)) {
+                    AlarmNotificationUtility.setTimer(item, manager, applicationContext, counter)
+                    break@loop
+                }
+                counter++
+            }
         } else {
             item.isEnabled = false
             service.update(item)
+            service.setShouldRefresh(true)
         }
 
         val manager = getSystemService(Service.NOTIFICATION_SERVICE) as NotificationManager

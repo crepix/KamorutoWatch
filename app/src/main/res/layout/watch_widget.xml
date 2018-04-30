@@ -79,6 +79,45 @@
             android:focusable="true" />
 
         <ImageView
+            android:id="@+id/kamoruto_eat"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ruto_selector_1"
+            android:clickable="true"
+            android:contentDescription="@string/app_name"
+            android:focusable="true"
+            android:visibility="gone"/>
+
+        <ImageView
+            android:id="@+id/kamoruto_sleep"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ruto_selector_2"
+            android:clickable="true"
+            android:contentDescription="@string/app_name"
+            android:focusable="true"
+            android:visibility="gone"/>
+
+        <ImageView
+            android:id="@+id/kamoruto_sleepy"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ruto_selector_3"
+            android:clickable="true"
+            android:contentDescription="@string/app_name"
+            android:focusable="true"
+            android:visibility="gone"/>
+
+        <ImageView
             android:id="@+id/week"
             android:layout_width="30dp"
             android:layout_height="30dp"
