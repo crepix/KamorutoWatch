@@ -13,19 +13,48 @@ import java.util.*
 
 class AlarmNotificationUtility {
     companion object {
-        fun setTimer(item: AlarmItem, manager: AlarmManager, context: Context, nextDay: Int = 0) {
+        fun setTimer(item: AlarmItem, manager: AlarmManager, context: Context) {
             val calendar = Calendar.getInstance(TimeZone.getDefault())
-            val hour = if (item.hour >= calendar.get(Calendar.HOUR_OF_DAY)) {
+            val hour = if (
+                    item.hour > calendar.get(Calendar.HOUR_OF_DAY) ||
+                    item.hour == calendar.get(Calendar.HOUR_OF_DAY) && item.minute > calendar.get(Calendar.MINUTE)) {
                 item.hour - calendar.get(Calendar.HOUR_OF_DAY)
             } else {
                 24 + item.hour - calendar.get(Calendar.HOUR_OF_DAY)
             }
-            val minute = if (item.minute >= calendar.get(Calendar.MINUTE)) {
-                item.minute - calendar.get(Calendar.MINUTE)
-            } else {
-                60 + item.minute - calendar.get(Calendar.MINUTE)
+            val minute = item.minute - calendar.get(Calendar.MINUTE)
+            val millis = System.currentTimeMillis() + (minute * 60 * 1000 + hour * 60 * 60 * 1000).toLong()
+
+            var counter = 0
+            if (item.isRepeated) {
+                val nextCalendar = Calendar.getInstance(TimeZone.getDefault())
+                nextCalendar.timeInMillis = millis
+                val week = nextCalendar.get(Calendar.DAY_OF_WEEK)
+                loop@ while (counter != 7) {
+                    val w = (week - 1 + counter) % 7 + 1
+                    if (
+                            (w == Calendar.SUNDAY && item.notifySunday) ||
+                            (w == Calendar.MONDAY && item.notifyMonday) ||
+                            (w == Calendar.TUESDAY && item.notifyTuesday) ||
+                            (w == Calendar.WEDNESDAY && item.notifyWednesday) ||
+                            (w == Calendar.THURSDAY && item.notifyThursday) ||
+                            (w == Calendar.FRIDAY && item.notifyFriday) ||
+                            (w == Calendar.SATURDAY && item.notifySaturday)) {
+                        break@loop
+                    }
+                    counter++
+                }
+                // もし一週間全てがセット不可能な場合はアラームは解除する
+                if (counter == 7) {
+                    val intent = PendingIntent.getService(
+                            context,
+                            item.id + 1000,
+                            Intent(context, AlarmService::class.java),
+                            0)
+                    manager.cancel(intent)
+                    return
+                }
             }
-            val millis = System.currentTimeMillis() + (minute * 60 * 1000 + (hour + nextDay * 24) * 60 * 60 * 1000).toLong()
 
             val i = Intent(context, AlarmService::class.java)
             val gson = Gson()
@@ -33,13 +62,13 @@ class AlarmNotificationUtility {
             val intent = PendingIntent.getService(context, item.id + 1000, i, PendingIntent.FLAG_CANCEL_CURRENT)
             when {
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
-                    setClockL(millis, manager, intent)
+                    setClockL(millis + counter * 24 * 60 * 60 * 1000, manager, intent)
                 }
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT -> {
-                    setClockM(millis, manager, intent)
+                    setClockM(millis + counter * 24 * 60 * 60 * 1000, manager, intent)
                 }
                 else -> {
-                    setClock(millis, manager, intent)
+                    setClock(millis + counter * 24 * 60 * 60 * 1000, manager, intent)
                 }
             }
         }

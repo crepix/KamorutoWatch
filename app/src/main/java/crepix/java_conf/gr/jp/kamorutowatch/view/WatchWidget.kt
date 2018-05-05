@@ -6,7 +6,6 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.*
 import android.os.SystemClock
-import android.util.Log
 import android.view.View
 import android.widget.RemoteViews
 

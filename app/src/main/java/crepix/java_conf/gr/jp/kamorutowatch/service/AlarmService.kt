@@ -46,27 +46,9 @@ class AlarmService : IntentService("AlarmService") {
         }
         r.play()
 
-        // TODO リピートがオンの場合は通知を再セットする
         if (item.isRepeated) {
-            val calendar = Calendar.getInstance(TimeZone.getDefault())
-            val week = calendar.get(Calendar.DAY_OF_WEEK)
             val manager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            var counter = 1
-            loop@ while (counter != 8) {
-                val w = (week - 1 + counter) % 7 + 1
-                if (
-                        (w == Calendar.SUNDAY && item.notifySunday) ||
-                        (w == Calendar.MONDAY && item.notifyMonday) ||
-                        (w == Calendar.TUESDAY && item.notifyTuesday) ||
-                        (w == Calendar.WEDNESDAY && item.notifyWednesday) ||
-                        (w == Calendar.THURSDAY && item.notifyThursday) ||
-                        (w == Calendar.FRIDAY && item.notifyFriday) ||
-                        (w == Calendar.SATURDAY && item.notifySaturday)) {
-                    AlarmNotificationUtility.setTimer(item, manager, applicationContext, counter)
-                    break@loop
-                }
-                counter++
-            }
+            AlarmNotificationUtility.setTimer(item, manager, applicationContext)
         } else {
             item.isEnabled = false
             service.update(item)

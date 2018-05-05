@@ -36,7 +36,26 @@ class DailyMaximService(private val context: Context) {
             R.string.maxim_7,
             R.string.maxim_8,
             R.string.maxim_9,
-            R.string.maxim_10)
+            R.string.maxim_10,
+            R.string.maxim_11,
+            R.string.maxim_12,
+            R.string.maxim_13,
+            R.string.maxim_14,
+            R.string.maxim_15,
+            R.string.maxim_16,
+            R.string.maxim_17,
+            R.string.maxim_18,
+            R.string.maxim_19,
+            R.string.maxim_20,
+            R.string.maxim_21,
+            R.string.maxim_22,
+            R.string.maxim_23,
+            R.string.maxim_24,
+            R.string.maxim_25,
+            R.string.maxim_26,
+            R.string.maxim_27,
+            R.string.maxim_28,
+            R.string.maxim_29)
 
     private val sleepyItems = arrayListOf(
             R.string.sleepy_0,

@@ -33,22 +33,14 @@ class MainActivity : AppCompatActivity() {
                 service.update(item)
                 if (item.isEnabled) {
                     removeTimer(item.id)
-                    if (item.isRepeated) {
-                        setTimerForWeek(item, manager)
-                    } else {
-                        AlarmNotificationUtility.setTimer(item, manager, this@MainActivity)
-                    }
+                    AlarmNotificationUtility.setTimer(item, manager, this@MainActivity)
                 }
             }
 
             override fun onSwitchChanged(item: AlarmItem) {
                 service.update(item)
                 if (item.isEnabled) {
-                    if (item.isRepeated) {
-                        setTimerForWeek(item, manager)
-                    } else {
-                        AlarmNotificationUtility.setTimer(item, manager, this@MainActivity)
-                    }
+                    AlarmNotificationUtility.setTimer(item, manager, this@MainActivity)
                 } else {
                     removeTimer(item.id)
                 }
@@ -92,27 +84,6 @@ class MainActivity : AppCompatActivity() {
         if (service.getShouldRefresh()) {
             adapter.refresh(service.getList())
             service.setShouldRefresh(false)
-        }
-    }
-
-    private fun setTimerForWeek(item: AlarmItem, manager: AlarmManager) {
-        val calendar = Calendar.getInstance(TimeZone.getDefault())
-        val week = calendar.get(Calendar.DAY_OF_WEEK)
-        var counter = 0
-        loop@ while (counter != 7) {
-            val w = (week - 1 + counter) % 7 + 1
-            if (
-                    (w == Calendar.SUNDAY && item.notifySunday) ||
-                    (w == Calendar.MONDAY && item.notifyMonday) ||
-                    (w == Calendar.TUESDAY && item.notifyTuesday) ||
-                    (w == Calendar.WEDNESDAY && item.notifyWednesday) ||
-                    (w == Calendar.THURSDAY && item.notifyThursday) ||
-                    (w == Calendar.FRIDAY && item.notifyFriday) ||
-                    (w == Calendar.SATURDAY && item.notifySaturday)) {
-                AlarmNotificationUtility.setTimer(item, manager, this, counter)
-                break@loop
-            }
-            counter++
         }
     }
 
