@@ -1,2 +1,2 @@
 # KamorutoWatch
-かもるとの時計Widget
+るとの時計Widget

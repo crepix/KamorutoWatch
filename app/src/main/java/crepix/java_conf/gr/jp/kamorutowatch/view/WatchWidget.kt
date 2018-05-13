@@ -5,7 +5,6 @@ import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.*
-import android.os.SystemClock
 import android.view.View
 import android.widget.RemoteViews
 
@@ -31,7 +30,7 @@ class WatchWidget : AppWidgetProvider() {
         super.onReceive(context, intent)
 
         val action = intent?.action
-        // かもるとが押された
+        // るとが押された
         if (action == buttonFilter) {
             context?.let {
                 val pref = context.getSharedPreferences(DailyMaximPreference.name, Context.MODE_PRIVATE)
@@ -58,9 +57,13 @@ class WatchWidget : AppWidgetProvider() {
                 0,
                 Intent(clockFilter),
                 PendingIntent.FLAG_UPDATE_CURRENT)
+        // 極力更新間隔を実際の分が進む時間に合わせる
+        // setRepeatingはムラがあるので実際には無意味だが……
+        val calendar = Calendar.getInstance(TimeZone.getDefault())
+        val initialDelay = 60100 - calendar.get(Calendar.SECOND) * 1000
         manager.setRepeating(
-                AlarmManager.ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime() + 60 * 1000,
+                AlarmManager.RTC,
+                System.currentTimeMillis() + initialDelay,
                 60 * 1000,
                 pendingIntent)
         // Enter relevant functionality for when the first widget is created

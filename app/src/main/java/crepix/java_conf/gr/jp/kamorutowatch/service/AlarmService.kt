@@ -14,9 +14,7 @@ import crepix.java_conf.gr.jp.kamorutowatch.domain.NotificationService
 import crepix.java_conf.gr.jp.kamorutowatch.view.MainActivity
 import android.media.RingtoneManager
 import android.os.Build
-import android.util.Log
 import crepix.java_conf.gr.jp.kamorutowatch.utility.AlarmNotificationUtility
-import java.util.*
 
 
 class AlarmService : IntentService("AlarmService") {
@@ -57,5 +55,9 @@ class AlarmService : IntentService("AlarmService") {
 
         val manager = getSystemService(Service.NOTIFICATION_SERVICE) as NotificationManager
         manager.notify(item.id + 1000, builder.build())
+
+        Thread.sleep(10000)
+
+        r.stop()
     }
 }

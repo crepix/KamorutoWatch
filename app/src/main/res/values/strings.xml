@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">かもる時計</string>
+    <string name="app_name">るとけい</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
 
@@ -41,7 +41,7 @@
     <string name="maxim_5">"るとの中身は\nお菓子ると～"</string>
     <string name="maxim_6">"ナポリタンは\nナポリ発祥\nじゃないると"</string>
     <string name="maxim_7">"もののあはれると～"</string>
-    <string name="maxim_8">"るとの名前は\nかもるとると"</string>
+    <string name="maxim_8">"るとの名前は\n「ると」ると"</string>
     <string name="maxim_9">"壁に耳あり\n障子にメアリー\nると～"</string>
     <string name="maxim_10">"東京特許\nきょきゃきょくると～"</string>
     <string name="maxim_11">"おみくじると～\n運勢は「大吉」ると！\nいいことあるると～"</string>
@@ -54,10 +54,10 @@
     <string name="maxim_18">"悪い夢……いや\nいい夢だったると……"</string>
     <string name="maxim_19">"天使の階級は\n全部で九つあるると\n知ってたると？"</string>
     <string name="maxim_20">"隣の客は\nよくかきくー客ると"</string>
-    <string name="maxim_21">"ろんりーろんりー\nかもるとは\n切なくないると"</string>
+    <string name="maxim_21">"ろんりーろんりー\nるとは\n切なくないると"</string>
     <string name="maxim_22">"夢と夢は違うものると\n君には分かるると～？"</string>
     <string name="maxim_23">"開けゴマ！\nると"</string>
-    <string name="maxim_24">"かもるとは0時に寝て\n7時に起きると～"</string>
+    <string name="maxim_24">"るとは0時に寝て\n7時に起きると～"</string>
     <string name="maxim_25">"ああ窓に！窓に！ると"</string>
     <string name="maxim_26">"致命的なエラーが\n発生しました……\n冗談ると正常ると～"</string>
     <string name="maxim_27">"くぁwせdrftgy\nふじこlp……ると"</string>
