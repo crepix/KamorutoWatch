@@ -100,6 +100,13 @@ class WatchWidget : AppWidgetProvider() {
             views.setOnClickPendingIntent(R.id.kamoruto_sleep, pendingIntent)
             views.setOnClickPendingIntent(R.id.kamoruto_sleepy, pendingIntent)
 
+            val activityIntent = PendingIntent.getActivity(
+                    context,
+                    10,
+                    Intent(context, MainActivity::class.java),
+                    0)
+            views.setOnClickPendingIntent(R.id.widget_layout, activityIntent)
+
             val calendar = Calendar.getInstance(TimeZone.getDefault())
             val currentRuto = changeRuto(views, calendar)
             if (isShowing) {
@@ -128,6 +135,14 @@ class WatchWidget : AppWidgetProvider() {
             views.setOnClickPendingIntent(R.id.kamoruto_eat, pendingIntent)
             views.setOnClickPendingIntent(R.id.kamoruto_sleep, pendingIntent)
             views.setOnClickPendingIntent(R.id.kamoruto_sleepy, pendingIntent)
+
+            val activityIntent = PendingIntent.getActivity(
+                    context,
+                    10,
+                    Intent(context, MainActivity::class.java),
+                    0)
+            views.setOnClickPendingIntent(R.id.widget_layout, activityIntent)
+
             val calendar = Calendar.getInstance(TimeZone.getDefault())
             val currentRuto = changeRuto(views, calendar)
             if (isShowing) {
