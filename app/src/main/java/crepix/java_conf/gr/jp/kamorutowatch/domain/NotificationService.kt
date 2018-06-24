@@ -4,9 +4,9 @@ import android.content.Context
 import com.google.gson.Gson
 
 
-class NotificationService(private val context: Context) {
+class NotificationService(context: Context) {
     val max = 5
-    val pref = context.getSharedPreferences(NotificationPreference.name, Context.MODE_PRIVATE)
+    private val pref = context.getSharedPreferences(NotificationPreference.name, Context.MODE_PRIVATE)
 
     fun getList(): List<AlarmItem> {
         val source = pref.getString(NotificationPreference.list, "")

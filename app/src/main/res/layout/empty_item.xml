@@ -14,6 +14,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/empty" />
+            app:srcCompat="@drawable/empty"
+            android:scaleType="fitCenter"/>
     </android.support.constraint.ConstraintLayout>
 </layout>

@@ -19,8 +19,8 @@ import crepix.java_conf.gr.jp.kamorutowatch.utility.AlarmNotificationUtility
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
-    lateinit var binding: ActivityMainBinding
-    lateinit var adapter: AlarmAdapter
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var adapter: AlarmAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
