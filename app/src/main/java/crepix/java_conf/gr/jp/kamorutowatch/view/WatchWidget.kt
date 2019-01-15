@@ -19,6 +19,7 @@ import java.util.*
 class WatchWidget : AppWidgetProvider() {
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
+        resetTimerIfNeed(context)
         // There may be multiple widgets active, so update all of them
         for (appWidgetId in appWidgetIds) {
             val pref = context.getSharedPreferences(DailyMaximPreference.name, Context.MODE_PRIVATE)
@@ -28,11 +29,11 @@ class WatchWidget : AppWidgetProvider() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
         super.onReceive(context, intent)
-
         val action = intent?.action
         // るとが押された
         if (action == buttonFilter) {
             context?.let {
+                resetTimerIfNeed(context)
                 val pref = context.getSharedPreferences(DailyMaximPreference.name, Context.MODE_PRIVATE)
                 val editor = pref.edit()
                 editor.putBoolean(
@@ -51,30 +52,41 @@ class WatchWidget : AppWidgetProvider() {
     }
 
     override fun onEnabled(context: Context) {
-        val manager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val pendingIntent = PendingIntent.getBroadcast(
-                context,
-                0,
-                Intent(clockFilter),
-                PendingIntent.FLAG_UPDATE_CURRENT)
-        // 極力更新間隔を実際の分が進む時間に合わせる
-        // setRepeatingはムラがあるので実際には無意味だが……
-        val calendar = Calendar.getInstance(TimeZone.getDefault())
-        val initialDelay = 60100 - calendar.get(Calendar.SECOND) * 1000
-        manager.setRepeating(
-                AlarmManager.RTC,
-                System.currentTimeMillis() + initialDelay,
-                60 * 1000,
-                pendingIntent)
+        resetTimerIfNeed(context)
         // Enter relevant functionality for when the first widget is created
+    }
+
+    private fun resetTimerIfNeed(context: Context) {
+        val manager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(context, WatchWidget::class.java)
+        intent.action = clockFilter
+        // 作成されていない場合は作成する
+        if (PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_NO_CREATE) == null) {
+            val pendingIntent = PendingIntent.getBroadcast(
+                    context,
+                    0,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT)
+            // 極力更新間隔を実際の分が進む時間に合わせる
+            // setRepeatingはムラがあるので実際には無意味だが……
+            val calendar = Calendar.getInstance(TimeZone.getDefault())
+            val initialDelay = 60100 - calendar.get(Calendar.SECOND) * 1000
+            manager.setRepeating(
+                    AlarmManager.RTC,
+                    System.currentTimeMillis() + initialDelay,
+                    60 * 1000,
+                    pendingIntent)
+        }
     }
 
     override fun onDisabled(context: Context) {
         val manager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(context, WatchWidget::class.java)
+        intent.action = clockFilter
         val pendingIntent = PendingIntent.getBroadcast(
                 context,
                 0,
-                Intent(clockFilter),
+                intent,
                 PendingIntent.FLAG_UPDATE_CURRENT)
         manager.cancel(pendingIntent)
         // Enter relevant functionality for when the last widget is disabled
@@ -90,10 +102,12 @@ class WatchWidget : AppWidgetProvider() {
                 preferences: SharedPreferences) {
             val isShowing = preferences.getBoolean(DailyMaximPreference.isShowing, DailyMaximPreference.isShowingDefault)
             val views = RemoteViews(context.packageName, R.layout.watch_widget)
+            val intent = Intent(context, WatchWidget::class.java)
+            intent.action = buttonFilter
             val pendingIntent = PendingIntent.getBroadcast(
                     context,
                     1,
-                    Intent(buttonFilter),
+                    intent,
                     PendingIntent.FLAG_UPDATE_CURRENT)
             views.setOnClickPendingIntent(R.id.kamoruto, pendingIntent)
             views.setOnClickPendingIntent(R.id.kamoruto_eat, pendingIntent)
@@ -122,14 +136,15 @@ class WatchWidget : AppWidgetProvider() {
                 appWidgetManager: AppWidgetManager,
                 appWidgetId: Int,
                 preferences: SharedPreferences) {
-
             // Construct the RemoteViews object
             val isShowing = preferences.getBoolean(DailyMaximPreference.isShowing, DailyMaximPreference.isShowingDefault)
             val views = RemoteViews(context.packageName, R.layout.watch_widget)
+            val intent = Intent(context, WatchWidget::class.java)
+            intent.action = buttonFilter
             val pendingIntent = PendingIntent.getBroadcast(
                     context,
                     1,
-                    Intent(buttonFilter),
+                    intent,
                     PendingIntent.FLAG_UPDATE_CURRENT)
             views.setOnClickPendingIntent(R.id.kamoruto, pendingIntent)
             views.setOnClickPendingIntent(R.id.kamoruto_eat, pendingIntent)
@@ -226,7 +241,8 @@ class WatchWidget : AppWidgetProvider() {
                 6 -> views.setImageViewResource(R.id.week, R.drawable.week_friday)
                 7 -> views.setImageViewResource(R.id.week, R.drawable.week_saturday)
             }
-            when (calendar.get(Calendar.MONTH % 10)) {
+            val month = calendar.get(Calendar.MONTH)
+            when (month % 10) {
                 0 -> views.setImageViewResource(R.id.month_one, R.drawable.time_1)
                 1 -> views.setImageViewResource(R.id.month_one, R.drawable.time_2)
                 2 -> views.setImageViewResource(R.id.month_one, R.drawable.time_3)
@@ -238,7 +254,7 @@ class WatchWidget : AppWidgetProvider() {
                 8 -> views.setImageViewResource(R.id.month_one, R.drawable.time_9)
                 9 -> views.setImageViewResource(R.id.month_one, R.drawable.time_0)
             }
-            when (calendar.get(Calendar.MONTH) / 10) {
+            when (month / 9) {
                 0 -> views.setViewVisibility(R.id.month_ten, View.INVISIBLE)
                 1 -> views.setViewVisibility(R.id.month_ten, View.VISIBLE)
             }

@@ -1,40 +1,42 @@
-package crepix.java_conf.gr.jp.kamorutowatch.service
+package crepix.java_conf.gr.jp.kamorutowatch.receiver
 
 import android.app.*
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.media.AudioAttributes
+import android.media.RingtoneManager
+import android.os.Build
+import android.os.Handler
 import android.support.v4.app.NotificationCompat
 import com.google.gson.Gson
 import crepix.java_conf.gr.jp.kamorutowatch.R
 import crepix.java_conf.gr.jp.kamorutowatch.domain.AlarmItem
 import crepix.java_conf.gr.jp.kamorutowatch.domain.NotificationService
-import crepix.java_conf.gr.jp.kamorutowatch.view.MainActivity
-import android.media.RingtoneManager
-import android.os.Build
 import crepix.java_conf.gr.jp.kamorutowatch.utility.AlarmNotificationUtility
+import crepix.java_conf.gr.jp.kamorutowatch.view.MainActivity
 
-
-class AlarmService : IntentService("AlarmService") {
-    override fun onHandleIntent(p0: Intent?) {
-        val intent = p0 ?: return
+class AlarmReceiver : BroadcastReceiver() {
+    override fun onReceive(p0: Context?, p1: Intent?) {
+        val context = p0 ?: return
+        val intent = p1 ?: return
         val gson = Gson()
         val item = gson.fromJson(intent.getStringExtra("alarmItem"), AlarmItem::class.java)
-        val builder = NotificationCompat.Builder(this, "alarm")
-        val i = Intent(applicationContext, MainActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(this, 2, i, PendingIntent.FLAG_UPDATE_CURRENT)
+        val builder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL)
+        val i = Intent(context.applicationContext, MainActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(context, 2, i, PendingIntent.FLAG_UPDATE_CURRENT)
         builder.setSmallIcon(R.drawable.notification)
-        builder.setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher))
-        builder.setContentText(getString(R.string.notification))
+        builder.setLargeIcon(BitmapFactory.decodeResource(context.resources, R.mipmap.ic_launcher))
+        builder.setContentText(context.getString(R.string.notification))
         builder.setContentIntent(pendingIntent)
         builder.setDefaults(Notification.DEFAULT_VIBRATE)
         builder.setLights(Color.WHITE, 2000, 1000)
         builder.setAutoCancel(true)
-        val service = NotificationService(this)
+        val service = NotificationService(context)
         val notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-        val r = RingtoneManager.getRingtone(applicationContext, notification)
+        val r = RingtoneManager.getRingtone(context.applicationContext, notification)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && service.getIsAlarmAllTime()) {
             val attr = AudioAttributes.Builder()
                     .setUsage(AudioAttributes.USAGE_ALARM)
@@ -45,19 +47,23 @@ class AlarmService : IntentService("AlarmService") {
         r.play()
 
         if (item.isRepeated) {
-            val manager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            AlarmNotificationUtility.setTimer(item, manager, applicationContext)
+            val manager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            AlarmNotificationUtility.setTimer(item, manager, context.applicationContext)
         } else {
             item.isEnabled = false
             service.update(item)
             service.setShouldRefresh(true)
         }
 
-        val manager = getSystemService(Service.NOTIFICATION_SERVICE) as NotificationManager
+        val manager = context.getSystemService(Service.NOTIFICATION_SERVICE) as NotificationManager
         manager.notify(item.id + 1000, builder.build())
 
-        Thread.sleep(10000)
+        Handler().postDelayed({
+            r.stop()
+        }, 10000)
+    }
 
-        r.stop()
+    companion object {
+        private const val NOTIFICATION_CHANNEL ="channel_ruto"
     }
 }

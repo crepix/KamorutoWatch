@@ -2,6 +2,7 @@
     <string name="app_name">るとけい</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
+    <string name="channel_setting_name">目覚まし通知</string>
 
     <string name="repeat">繰り返し</string>
     <string name="rest">%d / 5</string>

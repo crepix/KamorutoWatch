@@ -8,7 +8,7 @@ import android.content.Intent
 import android.os.Build
 import com.google.gson.Gson
 import crepix.java_conf.gr.jp.kamorutowatch.domain.AlarmItem
-import crepix.java_conf.gr.jp.kamorutowatch.service.AlarmService
+import crepix.java_conf.gr.jp.kamorutowatch.receiver.AlarmReceiver
 import java.util.*
 
 class AlarmNotificationUtility {
@@ -49,23 +49,24 @@ class AlarmNotificationUtility {
                     val intent = PendingIntent.getService(
                             context,
                             item.id + 1000,
-                            Intent(context, AlarmService::class.java),
+                            Intent(context, AlarmReceiver::class.java),
                             0)
                     manager.cancel(intent)
                     return
                 }
             }
 
-            val i = Intent(context, AlarmService::class.java)
+            val i = Intent(context, AlarmReceiver::class.java)
             val gson = Gson()
             i.putExtra("alarmItem", gson.toJson(item))
-            val intent = PendingIntent.getService(context, item.id + 1000, i, PendingIntent.FLAG_CANCEL_CURRENT)
+
+            val intent = PendingIntent.getBroadcast(context, item.id + 1000, i, PendingIntent.FLAG_CANCEL_CURRENT)
             when {
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
-                    setClockL(millis + counter * 24 * 60 * 60 * 1000, manager, intent)
+                    setClockM(millis + counter * 24 * 60 * 60 * 1000, manager, intent)
                 }
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT -> {
-                    setClockM(millis + counter * 24 * 60 * 60 * 1000, manager, intent)
+                    setClockL(millis + counter * 24 * 60 * 60 * 1000, manager, intent)
                 }
                 else -> {
                     setClock(millis + counter * 24 * 60 * 60 * 1000, manager, intent)
@@ -73,13 +74,13 @@ class AlarmNotificationUtility {
             }
         }
 
-        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-        private fun setClockL(millis: Long, manager: AlarmManager, intent: PendingIntent) {
-            manager.setAlarmClock(AlarmManager.AlarmClockInfo(millis, null), intent)
-        }
-
         @TargetApi(Build.VERSION_CODES.M)
         private fun setClockM(millis: Long, manager: AlarmManager, intent: PendingIntent) {
+            manager.setAlarmClock(AlarmManager.AlarmClockInfo(millis, intent), intent)
+        }
+
+        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+        private fun setClockL(millis: Long, manager: AlarmManager, intent: PendingIntent) {
             manager.setExact(AlarmManager.RTC_WAKEUP, millis, intent)
         }
 
