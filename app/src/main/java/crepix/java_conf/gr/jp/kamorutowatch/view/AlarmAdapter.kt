@@ -19,10 +19,12 @@ class AlarmAdapter(list: List<AlarmItem>, isAlarmAllTime: Boolean, private val l
     private var alarms = list
     private var alarmAllTime = isAlarmAllTime
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when(holder) {
             is AlarmViewHolder -> {
                 val binding = holder.binding ?: return
+                binding.alarmSwitch.setOnClickListener(null)
+                binding.repeatCheck.setOnClickListener(null)
                 val item = alarms[position]
 
                 setTimeTwo(binding.timeMinuteTen, binding.timeMinuteOne, item.minute)
@@ -127,10 +129,10 @@ class AlarmAdapter(list: List<AlarmItem>, isAlarmAllTime: Boolean, private val l
                     binding.alarmAllTime.visibility = View.GONE
                 }
                 binding.alarmAllTime.isChecked = alarmAllTime
-                binding.alarmAllTime.setOnCheckedChangeListener({ _, isChecked ->
+                binding.alarmAllTime.setOnCheckedChangeListener { _, isChecked ->
                     alarmAllTime = isChecked
                     listener.onAlarmChanged(isChecked)
-                })
+                }
             }
         }
     }
@@ -143,8 +145,8 @@ class AlarmAdapter(list: List<AlarmItem>, isAlarmAllTime: Boolean, private val l
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder? {
-        val context = parent?.context ?: return null
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val context = parent.context
         return when(viewType) {
             ViewType.Alarm.value -> AlarmViewHolder(LayoutInflater.from(context).inflate(R.layout.alarm_item, parent, false))
             ViewType.Empty.value -> EmptyViewHolder(LayoutInflater.from(context).inflate(R.layout.empty_item, parent, false))
